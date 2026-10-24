@@ -1,5 +1,7 @@
 # PureFlow: water purifier e-commerce app
 
+**Live admin panel (demo mode):** https://pureflow-admin.vercel.app. Log in with `admin@pureflow.test` / `Admin@123`. Without Firebase keys it runs on built-in sample data saved in your browser.
+
 PureFlow is an Android shopping app (React Native + Expo) with an admin panel hosted on Vercel. Data and logins use Firebase on the free Spark plan. Every service below has a free tier, so the whole setup costs nothing.
 
 | Part | Stack | Folder |
