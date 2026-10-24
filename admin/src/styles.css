@@ -87,7 +87,16 @@ textarea { resize: vertical; }
 .login-card h1 { margin-top: 14px; }
 .login-card p { margin: 6px 0 22px; }
 
+.demo-hint { margin-top: 18px; padding: 12px 14px; border-radius: 12px; background: var(--warn-soft); color: var(--warn); display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; align-items: center; font-size: 13px; }
+.demo-hint strong { grid-column: 1; }
+.demo-hint span { grid-column: 1; color: var(--text); font-family: ui-monospace, 'Cascadia Code', monospace; font-size: 12px; }
+.demo-hint .btn { grid-column: 2; grid-row: 1 / span 2; background: #fff; }
+
 /* Shell */
+.demo-note { margin: 0 6px 14px; padding: 12px; border-radius: 10px; background: rgba(245, 158, 11, 0.12); font-size: 12px; display: flex; flex-direction: column; gap: 4px; }
+.demo-note strong { color: #fbbf24; }
+.demo-note span { color: #94a3b8; }
+.link-btn { font: inherit; background: none; border: 0; padding: 0; color: #fbbf24; text-align: left; cursor: pointer; text-decoration: underline; }
 .shell { display: grid; grid-template-columns: 240px 1fr; min-height: 100%; }
 .sidebar { background: #0b1f2a; color: #cbd5e1; display: flex; flex-direction: column; padding: 18px 12px; position: sticky; top: 0; height: 100vh; }
 .brand { display: flex; gap: 10px; align-items: center; padding: 4px 10px 22px; }

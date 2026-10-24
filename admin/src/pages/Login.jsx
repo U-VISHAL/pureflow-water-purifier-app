@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../auth';
 
 export default function Login() {
-  const { login, error: authError } = useAuth();
+  const { login, error: authError, isDemo } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
@@ -37,6 +37,15 @@ export default function Login() {
         </label>
         {error || authError ? <p className="error">{error || authError}</p> : null}
         <button className="btn primary full" disabled={busy}>{busy ? 'Signing in…' : 'Sign in'}</button>
+        {isDemo ? (
+          <div className="demo-hint">
+            <strong>Demo admin</strong>
+            <span>admin@pureflow.test · Admin@123</span>
+            <button type="button" className="btn ghost sm" onClick={() => { setEmail('admin@pureflow.test'); setPassword('Admin@123'); }}>
+              Fill in
+            </button>
+          </div>
+        ) : null}
       </form>
     </div>
   );

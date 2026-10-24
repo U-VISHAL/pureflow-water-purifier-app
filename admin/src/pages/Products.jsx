@@ -1,7 +1,6 @@
-import { doc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
 import { useState } from 'react';
 import { Drawer, Empty, Field, Tabs, Toast } from '../components';
-import { db } from '../firebase';
+import { set as setRecord, update } from '../backend';
 import { inr } from '../lib/data';
 
 const CATEGORIES = ['Purifiers', 'Dispensers', 'Pumps', 'Filters', 'Spares'];
@@ -25,10 +24,10 @@ function ProductDrawer({ product, onClose, onToast }) {
       const data = {
         name: p.name.trim(), category: p.category, image: p.image.trim(), description: p.description.trim(),
         price: num(p.price), mrp: num(p.mrp) || num(p.price), dealerPrice: num(p.dealerPrice), moq: num(p.moq) || 1,
-        stock: num(p.stock), rating: num(p.rating), active: !!p.active, specs, updatedAt: serverTimestamp(),
+        stock: num(p.stock), rating: num(p.rating), active: !!p.active, specs, updatedAt: 'now',
       };
-      if (isNew) await setDoc(doc(db, 'products', `${p.category.slice(0, 3).toLowerCase()}-${slug(p.name)}`), { ...data, createdAt: serverTimestamp() });
-      else await updateDoc(doc(db, 'products', product.id), data);
+      if (isNew) await setRecord('products', `${p.category.slice(0, 3).toLowerCase()}-${slug(p.name)}`, { ...data, createdAt: 'now' });
+      else await update('products', product.id, data);
       onToast(`${data.name} saved`);
       onClose();
     } catch (err) {
@@ -75,7 +74,7 @@ export default function Products({ products }) {
     .sort((a, b) => CATEGORIES.indexOf(a.category) - CATEGORIES.indexOf(b.category) || a.name.localeCompare(b.name));
 
   const quickStock = async (p, stock) => {
-    await updateDoc(doc(db, 'products', p.id), { stock: Math.max(0, Number(stock) || 0), updatedAt: serverTimestamp() });
+    await update('products', p.id, { stock: Math.max(0, Number(stock) || 0), updatedAt: 'now' });
   };
 
   return (

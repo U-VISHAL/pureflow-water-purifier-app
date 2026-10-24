@@ -1,7 +1,6 @@
-import { doc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { useState } from 'react';
 import { Badge, Drawer, Empty, Field, Tabs, Toast } from '../components';
-import { auth, db } from '../firebase';
+import { update } from '../backend';
 import { fmtDate, formatAddress, inr } from '../lib/data';
 import { notifyUser, summarize } from '../lib/notify';
 
@@ -15,11 +14,11 @@ function DealerDrawer({ dealer, orders, onClose, onToast }) {
     if (status === 'rejected' && !reason.trim()) return onToast('Add a reason before rejecting.');
     setBusy(true);
     try {
-      await updateDoc(doc(db, 'users', dealer.id), {
+      await update('users', dealer.id, {
         dealerStatus: status,
         rejectionReason: status === 'rejected' ? reason.trim() : null,
-        reviewedAt: serverTimestamp(),
-        reviewedBy: auth.currentUser.email,
+        reviewedAt: 'now',
+        reviewedBy: 'admin',
       });
       const r = await notifyUser(
         dealer.id,

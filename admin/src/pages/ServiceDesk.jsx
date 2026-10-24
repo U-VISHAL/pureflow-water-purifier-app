@@ -1,7 +1,6 @@
-import { doc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { useState } from 'react';
 import { Badge, Drawer, Empty, Field, Tabs, Toast } from '../components';
-import { db } from '../firebase';
+import { update } from '../backend';
 import { fmtDate, formatAddress } from '../lib/data';
 import { notifyUser, summarize } from '../lib/notify';
 
@@ -26,12 +25,12 @@ function TicketDrawer({ t, onClose, onToast }) {
     setBusy(true);
     try {
       const changed = status !== t.status;
-      await updateDoc(doc(db, 'serviceRequests', t.id), {
+      await update('serviceRequests', t.id, {
         status,
         technician: tech.name ? tech : null,
         adminNote: note.trim(),
         history: changed ? [...(t.history || []), { status, at: new Date().toISOString(), by: 'admin' }] : t.history || [],
-        updatedAt: serverTimestamp(),
+        updatedAt: 'now',
       });
       const visit = `${new Date(t.preferredDate).toDateString()} (${t.slot})`;
       const body = {

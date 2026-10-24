@@ -1,7 +1,6 @@
-import { doc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { useMemo, useState } from 'react';
 import { Badge, Drawer, Empty, Field, Tabs, Toast } from '../components';
-import { db } from '../firebase';
+import { update } from '../backend';
 import { fmtDate, formatAddress, inr } from '../lib/data';
 import { notifyUser, summarize } from '../lib/notify';
 
@@ -27,12 +26,12 @@ function OrderDrawer({ order, onClose, onToast }) {
       const patch = {
         status,
         statusHistory: [...(order.statusHistory || []), { status, at: new Date().toISOString(), by: 'admin' }],
-        updatedAt: serverTimestamp(),
+        updatedAt: 'now',
       };
       if (status === 'shipped' && tracking.number) patch.tracking = tracking;
       if (status === 'cancelled') patch.cancelReason = reason || 'Cancelled by store';
-      if (status === 'delivered' && order.payment?.method === 'cod') patch['payment.status'] = 'paid';
-      await updateDoc(doc(db, 'orders', order.id), patch);
+      if (status === 'delivered' && order.payment?.method === 'cod') patch.payment = { ...order.payment, status: 'paid' };
+      await update('orders', order.id, patch);
       let body = `Your order #${order.orderNo} ${MESSAGES[status]}`;
       if (status === 'shipped' && tracking.number) body += ` ${tracking.carrier || 'Courier'} tracking: ${tracking.number}.`;
       if (status === 'cancelled' && reason) body += ` Reason: ${reason}.`;
@@ -46,7 +45,7 @@ function OrderDrawer({ order, onClose, onToast }) {
   };
 
   const saveTracking = async () => {
-    await updateDoc(doc(db, 'orders', order.id), { tracking, updatedAt: serverTimestamp() });
+    await update('orders', order.id, { tracking, updatedAt: 'now' });
     onToast('Tracking saved');
   };
 

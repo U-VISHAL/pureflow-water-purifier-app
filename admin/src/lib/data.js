@@ -1,6 +1,5 @@
-import { collection, onSnapshot } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
-import { db } from '../firebase';
+import { watchAll } from '../backend';
 
 export const toDate = (ts) => (ts?.toDate ? ts.toDate() : ts ? new Date(ts) : null);
 
@@ -16,10 +15,9 @@ export const formatAddress = (a) => (a ? [a.line1, a.city, a.state, a.pincode].f
 // Live collection, newest first. Admin rules allow reading everything.
 export function useCollection(name) {
   const [state, setState] = useState({ docs: [], loading: true, error: null });
-  useEffect(() => onSnapshot(
-    collection(db, name),
-    (snap) => {
-      const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  useEffect(() => watchAll(
+    name,
+    (docs) => {
       docs.sort((a, b) => (toDate(b.createdAt)?.getTime() || 0) - (toDate(a.createdAt)?.getTime() || 0));
       setState({ docs, loading: false, error: null });
     },

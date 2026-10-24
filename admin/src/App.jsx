@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Navigate, NavLink, Route, Routes } from 'react-router-dom';
 import { useAuth } from './auth';
+import { resetDemo } from './backend';
 import { Icon } from './components';
 import { useCollection } from './lib/data';
 import Dashboard from './pages/Dashboard';
@@ -11,7 +12,7 @@ import Products from './pages/Products';
 import ServiceDesk from './pages/ServiceDesk';
 
 function Shell() {
-  const { profile, logout } = useAuth();
+  const { profile, logout, isDemo } = useAuth();
   const [open, setOpen] = useState(false);
   const orders = useCollection('orders');
   const users = useCollection('users');
@@ -50,6 +51,15 @@ function Shell() {
             </NavLink>
           ))}
         </nav>
+        {isDemo ? (
+          <div className="demo-note">
+            <strong>Demo data</strong>
+            <span>Sample store data, saved in this browser only.</span>
+            <button className="link-btn" onClick={() => window.confirm('Reset all demo data to the original sample?') && resetDemo()}>
+              Reset demo data
+            </button>
+          </div>
+        ) : null}
         <div className="sidebar-foot">
           <div className="me">
             <div className="avatar">{(profile?.name || 'A')[0]}</div>
